@@ -1,0 +1,6 @@
+{
+    "name" : "browser",
+    "author": "Tom Robinson",
+    "dependencies": [],
+    "js": "lib"
+}
