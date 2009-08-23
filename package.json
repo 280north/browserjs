@@ -1,6 +1,7 @@
 {
-    "name" : "browser",
-    "author": "Tom Robinson",
-    "dependencies": [],
-    "js": "lib"
+    "name": "browser",
+    "dependencies": ["narwhal"],
+    "author": "Tom Robinson (http://tlrobinson.net/)",
+    "description": "A simulated web browser environment, includes XMLHttpRequest, timeouts, console, a DOM, etc",
+    "keywords": ["browser", "web browser", "dom", "xmlhttprequest"]
 }
