@@ -1,6 +1,22 @@
-var documentBuilder = Packages.javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder(),
+var builderFactory = Packages.javax.xml.parsers.DocumentBuilderFactory.newInstance();
+
+// setValidating to false doesn't seem to prevent it from downloading the DTD, but lets do it anyway
+builderFactory.setValidating(false);
+
+var documentBuilder = builderFactory.newDocumentBuilder(),
     domImplementation = documentBuilder.getDOMImplementation(),
     transformerFactory = Packages.javax.xml.transform.TransformerFactory.newInstance();
+
+// prevent the Java XML parser from downloading the plist DTD from Apple every time we parse a plist
+documentBuilder.setEntityResolver(new JavaAdapter(Packages.org.xml.sax.EntityResolver, {
+    resolveEntity: function(publicId, systemId) {
+        // TODO: return a local copy of the DTD?
+        if (String(systemId) === "http://www.apple.com/DTDs/PropertyList-1.0.dtd")
+            return new Packages.org.xml.sax.InputSource(new Packages.java.io.StringReader(""));
+
+        return null;
+    }
+}));
 
 transformerFactory.setAttribute("indent-number", new Packages.java.lang.Integer(2));
 
@@ -37,8 +53,7 @@ var DOMParser = exports.DOMParser = function() {
 DOMParser.prototype.parseFromString = function(/*String*/ text, /*String*/ contentType) {
     if (validContentTypes[contentType] !== true)
         throw new Error("DOMParser parseFromString() contentType argument must be one of text/xml, application/xml or application/xhtml+xml");
-    
-    return documentBuilder.parse(new Packages.org.xml.sax.InputSource(new Packages.java.io.StringReader(text)));
+    return documentBuilder.parse(new Packages.org.xml.sax.InputSource(new Packages.java.io.StringReader(String(text))));
 }
 
 // misc:
