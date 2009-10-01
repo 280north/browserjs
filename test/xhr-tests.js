@@ -1,11 +1,15 @@
 var assert = require("test/assert");
 
 var XHR = require("browser/xhr").XMLHttpRequest,
-    File = require("file");
+    File = require("file"),
+    ByteString = require("binary").ByteString;
 
 var testFileMissing = "foobarbaz-missing",
     testFilePresent = "foobarbaz-present",
-    contents = "hello world\n";
+    contents = "hello world\n",
+    binaryContents = new ByteString(contents);
+
+var sendAsBinary = function(req) { return req.sendAsBinary(binaryContents); };
 
 exports.setup = function() {
     try { File.remove(testFileMissing); } catch (e) {}
@@ -40,9 +44,29 @@ exports.testSynchronouseLocalDELETE = function() {
     assert.isTrue(!File.exists(testFilePresent), "File should be deleted");
 }
 
-function xhrSynchronousTest(method, url, expectedStatus, expectedText) {
+exports.testSynchronouseLocalBinaryGET = function() {
+    xhrSynchronousTest("GET", testFilePresent, 200, contents, sendAsBinary);
+}
+
+exports.testSynchronouseLocalBinaryGETMissing = function() {
+    xhrSynchronousTest("GET", testFileMissing, 404, "", sendAsBinary);
+}
+
+exports.testSynchronouseLocalBinaryPUT = function() {
+    xhrSynchronousTest("PUT", testFileMissing, 201, "", sendAsBinary);
+    assert.isEqual(binaryContents.decodeToString(64), File.read(testFileMissing, "rb").decodeToString(64));
+}
+
+exports.testSynchronouseLocalBinaryDELETE = function() {
+    xhrSynchronousTest("DELETE", testFilePresent, 200, "", sendAsBinary);
+    assert.isTrue(!File.exists(testFilePresent), "File should be deleted");
+}
+
+function xhrSynchronousTest(method, url, expectedStatus, expectedText, send) {
     var req = new XHR(),
         lastState = req.readyState;
+
+    send = send || function(req) { req.send(contents); };
         
     assert.isEqual(0, lastState);
     req.onreadystatechange = function() {
@@ -54,7 +78,7 @@ function xhrSynchronousTest(method, url, expectedStatus, expectedText) {
     
     assert.isEqual(1, req.readyState);
     
-    req.send(contents);
+    send(req);
     
     assert.isEqual(4, req.readyState);
     assert.isEqual(4, lastState);
