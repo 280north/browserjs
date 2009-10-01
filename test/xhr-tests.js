@@ -32,7 +32,7 @@ exports.testSynchronouseLocalGETMissing = function() {
 
 exports.testSynchronouseLocalPUT = function() {
     xhrSynchronousTest("PUT", testFileMissing, 201, "");
-    assert.equal(contents, File.read(testFileMissing));
+    assert.isEqual(contents, File.read(testFileMissing));
 }
 
 exports.testSynchronouseLocalDELETE = function() {
@@ -44,7 +44,7 @@ function xhrSynchronousTest(method, url, expectedStatus, expectedText) {
     var req = new XHR(),
         lastState = req.readyState;
         
-    assert.equal(0, lastState);
+    assert.isEqual(0, lastState);
     req.onreadystatechange = function() {
         assert.isTrue(lastState <= req.readyState, "readyState not monotonically increasing");
         lastState = req.readyState;
@@ -52,12 +52,12 @@ function xhrSynchronousTest(method, url, expectedStatus, expectedText) {
     
     req.open(method, url, false);
     
-    assert.equal(1, req.readyState);
+    assert.isEqual(1, req.readyState);
     
     req.send(contents);
     
-    assert.equal(4, req.readyState);
-    assert.equal(4, lastState);
-    assert.equal(expectedStatus, req.status);
-    assert.equal(expectedText, req.responseText);
+    assert.isEqual(4, req.readyState);
+    assert.isEqual(4, lastState);
+    assert.isEqual(expectedStatus, req.status);
+    assert.isEqual(expectedText, req.responseText);
 }
