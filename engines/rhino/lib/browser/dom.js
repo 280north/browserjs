@@ -7,6 +7,9 @@ var documentBuilder = builderFactory.newDocumentBuilder(),
     domImplementation = documentBuilder.getDOMImplementation(),
     transformerFactory = Packages.javax.xml.transform.TransformerFactory.newInstance();
 
+// suppress log messages, it throws an exception anyway
+documentBuilder.setErrorHandler(null);
+
 // prevent the Java XML parser from downloading the plist DTD from Apple every time we parse a plist
 documentBuilder.setEntityResolver(new JavaAdapter(Packages.org.xml.sax.EntityResolver, {
     resolveEntity: function(publicId, systemId) {
