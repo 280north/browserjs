@@ -1,5 +1,6 @@
 {
     "name": "browserjs",
+    "version": "0.1",
     "dependencies": ["narwhal"],
     "author": "Tom Robinson (http://tlrobinson.net/)",
     "description": "A simulated web browser environment, includes XMLHttpRequest, timeouts, console, a DOM, etc",
