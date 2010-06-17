@@ -1,7 +1,7 @@
 browserjs
 =========
 
-BrowserJS is a ServerJS compatible package that emulates portions of the browser JavaScript APIs.
+BrowserJS is a CommonJS package that emulates portions of the browser JavaScript APIs.
 
 Supported APIs
 --------------
